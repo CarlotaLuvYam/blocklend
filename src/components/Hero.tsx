@@ -85,7 +85,7 @@ const Hero = () => {
               )}
 
               <Link
-                to="Howitworks.tsx"
+                to="#how-it-works"
                 className="group bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white/20 transition-all flex items-center justify-center border border-white/20"
               >
                 Learn How It Works

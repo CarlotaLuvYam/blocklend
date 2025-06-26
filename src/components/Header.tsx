@@ -22,9 +22,9 @@ const Header = () => {
 
   const navItems = [
     { name: 'Home', href: '/' },
-    { name: 'How It Works', href: '/#how-it-works' },
-    { name: 'Apply for Loan', href: '/apply' },
-    { name: 'Dashboard', href: '/dashboard' },
+    { name: 'How It Works', href: 'HowItWorks.tsx' },
+    { name: 'Apply for Loan', href: 'LoanApplication.tsx' },
+    { name: 'Dashboard', href: 'Dashboard.tsx' },
   ];
 
   const formatAddress = (address: string) => {
