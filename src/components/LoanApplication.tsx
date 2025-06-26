@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext';
 const LoanApplication = () => {
   const navigate = useNavigate();
   const { account, isConnected } = useWeb3();
-  const { user, isAuthenticated, login } = useAuth();
+  const { isAuthenticated, login } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
   const [applicationResult, setApplicationResult] = useState<'approved' | 'rejected' | null>(null);

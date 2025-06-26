@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Users, 
   FileText, 
   TrendingUp, 
   AlertCircle,
@@ -10,8 +9,7 @@ import {
   DollarSign,
   Clock,
   Shield,
-  Search,
-  Filter
+  Search
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 

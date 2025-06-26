@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, Activity, DollarSign, Users, AlertCircle } from 'lucide-react';
 
 const Analytics = () => {
