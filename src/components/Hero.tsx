@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+// import React and useState are not needed in this file
 import { Link } from 'react-router-dom';
 import { ArrowRight, Shield, Zap, TrendingUp, CheckCircle, Wallet } from 'lucide-react';
 import { useWeb3 } from '../context/Web3Context';

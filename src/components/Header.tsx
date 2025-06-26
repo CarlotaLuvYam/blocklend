@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Wallet, User, LogOut, Shield } from 'lucide-react';
 import { useWeb3 } from '../context/Web3Context';
@@ -10,7 +10,7 @@ const Header = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const location = useLocation();
   const { account, isConnected, connectWallet, disconnectWallet } = useWeb3();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {

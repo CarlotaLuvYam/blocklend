@@ -19,17 +19,12 @@ export const LENDING_CONTRACT_ADDRESS = "0x742d35cc6bf3b4c4a4b8d4e4f5a6b7c8d9e0f
 
 export class ContractService {
   private contract: ethers.Contract | null = null;
-  private provider: ethers.BrowserProvider | null = null;
-  private signer: ethers.JsonRpcSigner | null = null;
 
   constructor(provider?: ethers.BrowserProvider, signer?: ethers.JsonRpcSigner) {
     if (provider && signer) {
-      this.provider = provider;
-      this.signer = signer;
       this.contract = new ethers.Contract(LENDING_CONTRACT_ADDRESS, LENDING_CONTRACT_ABI, signer);
     }
   }
-
   async submitLoanApplication(
     amount: string,
     duration: number,

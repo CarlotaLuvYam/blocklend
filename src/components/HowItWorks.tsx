@@ -1,4 +1,3 @@
-import React from 'react';
 import { Wallet, FileText, Brain, CheckCircle, ArrowRight } from 'lucide-react';
 
 const HowItWorks = () => {
