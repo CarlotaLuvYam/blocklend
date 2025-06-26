@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Features from './components/Features';
@@ -22,7 +22,7 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/apply" element={<LoanApplication />} />
               <Route path="/admin" element={<AdminPanel />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="/howitworks" element={<HowItWorks />} />
             </Routes>
             <Footer />
           </div>

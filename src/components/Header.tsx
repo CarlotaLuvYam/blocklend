@@ -21,10 +21,11 @@ const Header = () => {
   }, []);
 
   const navItems = [
-    { name: 'Home', href: '/' },
-    { name: 'How It Works', href: 'HowItWorks.tsx' },
-    { name: 'Apply for Loan', href: 'LoanApplication.tsx' },
-    { name: 'Dashboard', href: 'Dashboard.tsx' },
+	{ name: "Home", href: "/" },
+	{ name: "Dashboard", href: "/dashboard" },
+	{ name: "How It Works", href: "/howitworks" },
+	{ name: "Apply for loan", href: "/apply" },
+	{ name: "Admin", href: "/admin" }
   ];
 
   const formatAddress = (address: string) => {
