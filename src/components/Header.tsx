@@ -78,61 +78,76 @@ const Header = () => {
 
           <div className="hidden md:flex items-center space-x-4">
             {isConnected && account ? (
-              <div className="relative">
-                <button
-                  onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg transition-all"
-                >
-                  <Wallet className="h-4 w-4" />
-                  <span>{formatAddress(account)}</span>
-                </button>
-
-                {showUserMenu && (
-                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2">
-                    <div className="px-4 py-2 border-b border-gray-100">
-                      <p className="text-sm text-gray-600">Connected Wallet</p>
-                      <p className="font-medium text-gray-900">{formatAddress(account)}</p>
-                      {user && (
-                        <p className="text-sm text-blue-600">{user.name}</p>
-                      )}
-                    </div>
-                    <Link
-                      to="/dashboard"
-                      className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-50"
-                      onClick={() => setShowUserMenu(false)}
-                    >
-                      <User className="h-4 w-4" />
-                      <span>Dashboard</span>
-                    </Link>
-                    {user?.role === 'admin' && (
-                      <Link
-                        to="/admin"
-                        className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-50"
-                        onClick={() => setShowUserMenu(false)}
-                      >
-                        <Shield className="h-4 w-4" />
-                        <span>Admin Panel</span>
-                      </Link>
-                    )}
-                    <button
-                      onClick={handleLogout}
-                      className="flex items-center space-x-2 px-4 py-2 text-red-600 hover:bg-red-50 w-full text-left"
-                    >
-                      <LogOut className="h-4 w-4" />
-                      <span>Disconnect</span>
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <button
-                onClick={connectWallet}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transition-all transform hover:scale-105 flex items-center space-x-2"
-              >
-                <Wallet className="h-4 w-4" />
-                <span>Connect Wallet</span>
-              </button>
-            )}
+  <div className="relative">
+    <button
+      onClick={() => setShowUserMenu(!showUserMenu)}
+      className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg transition-all"
+    >
+      <Wallet className="h-4 w-4" />
+      <span>{formatAddress(account)}</span>
+    </button>
+    {showUserMenu && (
+      <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2">
+        <div className="px-4 py-2 border-b border-gray-100">
+          <p className="text-sm text-gray-600">Connected Wallet</p>
+          <p className="font-medium text-gray-900">{formatAddress(account)}</p>
+          {user && (
+            <p className="text-sm text-blue-600">{user.name}</p>
+          )}
+        </div>
+        <Link
+          to="/dashboard"
+          className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-50"
+          onClick={() => setShowUserMenu(false)}
+        >
+          <User className="h-4 w-4" />
+          <span>Dashboard</span>
+        </Link>
+        {user?.role === 'admin' && (
+          <Link
+            to="/admin"
+            className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-50"
+            onClick={() => setShowUserMenu(false)}
+          >
+            <Shield className="h-4 w-4" />
+            <span>Admin Panel</span>
+          </Link>
+        )}
+        <button
+          onClick={handleLogout}
+          className="flex items-center space-x-2 px-4 py-2 text-red-600 hover:bg-red-50 w-full text-left"
+        >
+          <LogOut className="h-4 w-4" />
+          <span>Disconnect</span>
+        </button>
+      </div>
+    )}
+  </div>
+) : (
+  <div className="flex items-center space-x-3">
+    <Link
+      to="/login"
+      className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400"
+    >
+      <User className="h-4 w-4" />
+      <span>Login</span>
+    </Link>
+    <Link
+      to="/register"
+      className="flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-400"
+    >
+      <User className="h-4 w-4" />
+      <span>Register</span>
+    </Link>
+    <button
+      onClick={connectWallet}
+      className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transition-all transform hover:scale-105 flex items-center space-x-2"
+    >
+      <Wallet className="h-4 w-4" />
+      <span>Connect Wallet</span>
+    </button>
+  </div>
+)}
           </div>
 
           {/* Mobile Menu Button */}
