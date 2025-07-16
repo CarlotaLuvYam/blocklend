@@ -22,6 +22,7 @@ function ScrollToTop() {
 }
 
 import { useAuth } from './context/AuthContext';
+// NOTE: Providers are applied in main.tsx. Do NOT wrap App with AuthProvider or Web3Provider here.
 
 function AppContent() {
   const { isAuthenticated, logout } = useAuth();
