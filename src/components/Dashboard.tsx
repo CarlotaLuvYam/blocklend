@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { BrowserProvider, parseEther } from 'ethers';
+
 import { useNavigate } from 'react-router-dom';
 import { 
   DollarSign, 
@@ -15,6 +17,10 @@ import { useAuth } from '../context/AuthContext';
 import { useWeb3 } from '../context/Web3Context';
 
 const Dashboard = () => {
+  const [showLoanModal, setShowLoanModal] = useState(false);
+  const [selectedLoan, setSelectedLoan] = useState<any>(null);
+  const [showStatementModal, setShowStatementModal] = useState(false);
+  const [statementPeriod, setStatementPeriod] = useState('monthly');
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   const { account, isConnected } = useWeb3();
@@ -237,18 +243,44 @@ const Dashboard = () => {
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
                     <div className="space-y-3">
-                      <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-lg font-semibold hover:shadow-lg transition-all">
-                        Make Payment
-                      </button>
+                      <button
+  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-lg font-semibold hover:shadow-lg transition-all"
+  onClick={async () => {
+    try {
+      if (!window.ethereum) {
+        alert('MetaMask is not installed!');
+        return;
+      }
+      const provider = new BrowserProvider(window.ethereum);
+      await provider.send('eth_requestAccounts', []);
+      const signer = await provider.getSigner();
+      // Replace with your contract or recipient address
+      const address = await signer.getAddress();
+      const tx = await signer.sendTransaction({
+        to: address,
+        value: parseEther('0.1')
+      });
+      await tx.wait();
+      alert('Payment successful!');
+    } catch (err: any) {
+      alert(err.message || 'Payment failed or cancelled.');
+    }
+  }}
+>
+  Make Payment
+</button>
                       <button 
                         onClick={() => navigate('/apply')}
                         className="w-full border border-gray-300 text-gray-700 p-4 rounded-lg font-semibold hover:bg-gray-50 transition-all"
                       >
                         Apply for New Loan
                       </button>
-                      <button className="w-full border border-gray-300 text-gray-700 p-4 rounded-lg font-semibold hover:bg-gray-50 transition-all">
-                        Download Statements
-                      </button>
+                      <button
+  className="w-full border border-gray-300 text-gray-700 p-4 rounded-lg font-semibold hover:bg-gray-50 transition-all"
+  onClick={() => setShowStatementModal(true)}
+>
+  Download Statements
+</button>
                     </div>
                   </div>
                 </div>
@@ -312,7 +344,13 @@ const Dashboard = () => {
                           <div className="font-medium capitalize">{loan.status}</div>
                         </div>
                         <div>
-                          <button className="text-blue-600 hover:text-blue-800 font-medium">
+                          <button
+  className="text-blue-600 hover:text-blue-800 font-medium"
+  onClick={() => {
+    setSelectedLoan(loan);
+    setShowLoanModal(true);
+  }}
+>
                             View Details
                           </button>
                         </div>
@@ -422,6 +460,130 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+      {/* Loan Details Modal */}
+      {showLoanModal && selectedLoan && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full relative">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+              onClick={() => setShowLoanModal(false)}
+            >
+              &times;
+            </button>
+            <h3 className="text-xl font-semibold mb-4">Loan Details</h3>
+            <div className="space-y-2">
+              <div><span className="font-medium">Loan ID:</span> {selectedLoan.id}</div>
+              <div><span className="font-medium">Amount:</span> ${selectedLoan.amount.toLocaleString()}</div>
+              <div><span className="font-medium">Purpose:</span> {selectedLoan.purpose}</div>
+              <div><span className="font-medium">Status:</span> {selectedLoan.status}</div>
+              <div><span className="font-medium">Date:</span> {selectedLoan.date}</div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Download Statement Modal */}
+      {showStatementModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full relative">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+              onClick={() => setShowStatementModal(false)}
+            >
+              &times;
+            </button>
+            <h3 className="text-xl font-semibold mb-4">Select Statement Period</h3>
+            <select
+              className="w-full border border-gray-300 rounded-lg p-2 mb-4"
+              value={statementPeriod}
+              onChange={e => setStatementPeriod(e.target.value)}
+            >
+              <option value="monthly">Monthly</option>
+              <option value="quarterly">Quarterly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+            <button
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white p-3 rounded-lg font-semibold hover:shadow-lg transition-all"
+              onClick={async () => {
+                try {
+                  // Dynamically import jsPDF and autoTable
+                  const jsPDF = (await import('jspdf')).jsPDF;
+                  const autoTable = (await import('jspdf-autotable')).default;
+                  const doc = new jsPDF();
+
+                  // Company theme colors (canvas gradient workaround)
+                  const canvas = document.createElement('canvas');
+                  canvas.width = 210 * 3; // PDF points to pixels (approximate)
+                  canvas.height = 24 * 3;
+                  const ctx = canvas.getContext('2d');
+                  if (ctx) {
+                    const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+                    gradient.addColorStop(0, '#2563eb'); // blue-600
+                    gradient.addColorStop(1, '#9333ea'); // purple-600
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    // Insert the gradient image at the top of the PDF
+                    const imgData = canvas.toDataURL('image/png');
+                    doc.addImage(imgData, 'PNG', 0, 8, 210, 8); // y=8, height=8 for a thin bar
+                  }
+
+                  // Header
+                  doc.setFontSize(22);
+                  doc.setTextColor('#2563eb');
+                  doc.text('BLOCKLEND Statement', 105, 20, { align: 'center' });
+                  doc.setFontSize(12);
+                  doc.setTextColor('#333');
+                  doc.text(`Client: ${user?.name || ''}`, 14, 32);
+                  doc.text(`Wallet: ${account ? account.slice(0, 8) + '...' + account.slice(-4) : ''}`, 14, 40);
+                  doc.text(`Period: ${statementPeriod.charAt(0).toUpperCase() + statementPeriod.slice(1)}`, 14, 48);
+                  doc.text(`Generated: ${new Date().toLocaleDateString()}`, 14, 56);
+
+                  // Loan History Table
+                  autoTable(doc, {
+                    startY: 65,
+                    head: [['Loan ID', 'Amount', 'Purpose', 'Status', 'Date']],
+                    body: loanData.loanHistory.map(l => [
+                      l.id,
+                      `$${l.amount.toLocaleString()}`,
+                      l.purpose,
+                      l.status.charAt(0).toUpperCase() + l.status.slice(1),
+                      l.date
+                    ]),
+                    styles: { fillColor: [37, 99, 235], textColor: 255 },
+                    headStyles: { fillColor: [147, 51, 234] },
+                    alternateRowStyles: { fillColor: [229, 231, 235], textColor: 51 },
+                    margin: { left: 14, right: 14 },
+                  });
+
+                  // Payment History Table
+                  autoTable(doc, {
+                    startY: doc.lastAutoTable.finalY + 10,
+                    head: [['Payment ID', 'Amount', 'Date', 'Status', 'Tx Hash']],
+                    body: loanData.paymentHistory.map(p => [
+                      p.id,
+                      `$${p.amount.toLocaleString()}`,
+                      p.date,
+                      p.status.charAt(0).toUpperCase() + p.status.slice(1),
+                      p.txHash.slice(0, 10) + '...'
+                    ]),
+                    styles: { fillColor: [37, 99, 235], textColor: 255 },
+                    headStyles: { fillColor: [16, 185, 129] },
+                    alternateRowStyles: { fillColor: [229, 231, 235], textColor: 51 },
+                    margin: { left: 14, right: 14 },
+                  });
+
+                  // Save PDF
+                  doc.save(`statement-${statementPeriod}.pdf`);
+                  setShowStatementModal(false);
+                } catch (err: any) {
+                  alert('Failed to generate statement.');
+                }
+              }}
+            >
+              Download
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

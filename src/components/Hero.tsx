@@ -85,6 +85,14 @@ const Hero = () => {
               )}
 
               <Link
+                to="/dashboard"
+                className="group bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center justify-center"
+              >
+                Go to Dashboard
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+
+              <Link
                 to="#how-it-works"
                 className="group bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white/20 transition-all flex items-center justify-center border border-white/20"
               >

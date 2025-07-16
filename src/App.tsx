@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import NotFound from './components/NotFound';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Features from './components/Features';
@@ -23,6 +24,7 @@ function App() {
               <Route path="/apply" element={<LoanApplication />} />
               <Route path="/admin" element={<AdminPanel />} />
               <Route path="/howitworks" element={<HowItWorks />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
             <Footer />
           </div>
