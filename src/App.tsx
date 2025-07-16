@@ -11,8 +11,7 @@ import AdminPanel from './components/AdminPanel';
 import Footer from './components/Footer';
 import Login from './components/Login';
 import Register from './components/Register';
-import { Web3Provider } from './context/Web3Context';
-import { AuthProvider } from './context/AuthContext';
+
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -59,13 +58,7 @@ function AppContent() {
 }
 
 function App() {
-  return (
-    <Web3Provider>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
-    </Web3Provider>
-  );
+  return <AppContent />;
 }
 
 const HomePage = () => (
