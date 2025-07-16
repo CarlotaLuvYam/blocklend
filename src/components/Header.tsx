@@ -39,22 +39,20 @@ const Header = () => {
   };
 
   return (
-    <header 
+    <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled 
-          ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100' 
-          : 'bg-transparent'
+        isScrolled
+          ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100 rounded-b-2xl'
+          : 'bg-gradient-to-r from-blue-800 to-purple-800 rounded-b-2xl'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16 lg:h-20">
+        <div className="flex justify-between items-center h-20 lg:h-24">
           <Link to="/" className="flex items-center space-x-3">
             <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg">
               <Shield className="h-6 w-6 text-white" />
             </div>
-            <span className={`text-xl font-bold transition-colors ${
-              isScrolled ? 'text-gray-900' : 'text-white'
-            }`}>
+            <span className={`text-2xl font-bold drop-shadow-sm ${isScrolled ? 'text-gray-900' : 'text-white'}`}>
               BlockLend
             </span>
           </Link>
@@ -65,10 +63,10 @@ const Header = () => {
               <Link
                 key={item.name}
                 to={item.href}
-                className={`font-medium transition-colors hover:text-blue-600 ${
+                className={`font-medium transition-all duration-200 ease-in-out hover:text-blue-600 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-0 ${
                   location.pathname === item.href
                     ? 'text-blue-600'
-                    : isScrolled ? 'text-gray-700' : 'text-white hover:text-blue-200'
+                    : 'text-gray-900'
                 }`}
               >
                 {item.name}
@@ -81,7 +79,7 @@ const Header = () => {
   <div className="relative">
     <button
       onClick={() => setShowUserMenu(!showUserMenu)}
-      className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg transition-all"
+      className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 ease-in-out hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-0"
     >
       <Wallet className="h-4 w-4" />
       <span>{formatAddress(account)}</span>
@@ -127,21 +125,21 @@ const Header = () => {
   <div className="flex items-center space-x-3">
     <Link
       to="/login"
-      className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transition-all transform hover:scale-105 focus:outline-none focus:ring-0 transition-all duration-200 ease-in-out hover:scale-105 hover:shadow-lg"
     >
       <User className="h-4 w-4" />
       <span>Login</span>
     </Link>
     <Link
       to="/register"
-      className="flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-400"
+      className="flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transition-all transform hover:scale-105 focus:outline-none focus:ring-0 transition-all duration-200 ease-in-out hover:scale-105 hover:shadow-lg"
     >
       <User className="h-4 w-4" />
       <span>Register</span>
     </Link>
     <button
       onClick={connectWallet}
-      className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg transition-all transform hover:scale-105 flex items-center space-x-2"
+      className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 ease-in-out hover:scale-105 hover:shadow-lg flex items-center space-x-2 focus:outline-none focus:ring-0"
     >
       <Wallet className="h-4 w-4" />
       <span>Connect Wallet</span>
