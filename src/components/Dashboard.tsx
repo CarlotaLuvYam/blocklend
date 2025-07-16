@@ -22,54 +22,40 @@ const Dashboard = () => {
   const [showStatementModal, setShowStatementModal] = useState(false);
   const [statementPeriod, setStatementPeriod] = useState('monthly');
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, token } = useAuth();
   const { account, isConnected } = useWeb3();
   const [activeTab, setActiveTab] = useState('overview');
 
-  // Mock loan data - in real app, this would come from blockchain/API
-  const [loanData] = useState({
-    currentLoan: {
-      amount: 5000,
-      balance: 3200,
-      interestRate: 8.5,
-      monthlyPayment: 456,
-      nextPaymentDate: '2025-02-15',
-      paymentsRemaining: 7,
-      status: 'active'
-    },
-    loanHistory: [
-      {
-        id: 1,
-        amount: 2500,
-        status: 'completed',
-        date: '2024-06-15',
-        purpose: 'Business expansion'
-      },
-      {
-        id: 2,
-        amount: 5000,
-        status: 'active',
-        date: '2024-12-01',
-        purpose: 'Equipment purchase'
+  // Real loan data from backend
+  const [loanData, setLoanData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    setLoading(true);
+    setError('');
+    fetch('/api/loans/user/loans', {
+      headers: {
+        Authorization: `Bearer ${token}`
       }
-    ],
-    paymentHistory: [
-      {
-        id: 1,
-        amount: 456,
-        date: '2025-01-15',
-        status: 'completed',
-        txHash: '0x742d35cc6bf3b4c4a4b8d4e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4'
-      },
-      {
-        id: 2,
-        amount: 456,
-        date: '2024-12-15',
-        status: 'completed',
-        txHash: '0x852e46dd7cf4c5d5b5c9e5f5g6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5'
-      }
-    ]
-  });
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch loans');
+        return res.json();
+      })
+      .then(data => {
+        setLoanData(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('Could not load loans');
+        setLoading(false);
+      });
+  }, [isAuthenticated, token, navigate]);
 
   useEffect(() => {
     if (!isAuthenticated || !isConnected) {
@@ -80,6 +66,12 @@ const Dashboard = () => {
   if (!isAuthenticated || !isConnected) {
     return null;
   }
+  if (loading) {
+    return <div className="text-center mt-10">Loading loans...</div>;
+  }
+  if (error) {
+    return <div className="text-center mt-10 text-red-600">{error}</div>;
+  }
 
   const formatAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
@@ -89,6 +81,10 @@ const Dashboard = () => {
     const { amount, balance } = loanData.currentLoan;
     return ((amount - balance) / amount) * 100;
   };
+
+// Fix implicit any types in map functions throughout the file
+// Example usage: loanHistory.map((loan: any) => ...), paymentHistory.map((payment: any) => ...)
+
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: TrendingUp },
@@ -315,7 +311,7 @@ const Dashboard = () => {
               <div className="space-y-6">
                 <h3 className="text-lg font-semibold text-gray-900">My Loans</h3>
                 <div className="space-y-4">
-                  {loanData.loanHistory.map((loan) => (
+                  {loanData.loanHistory.map((loan: any) => (
                     <div key={loan.id} className="border border-gray-200 rounded-lg p-6">
                       <div className="flex items-center justify-between mb-4">
                         <div>
@@ -345,12 +341,12 @@ const Dashboard = () => {
                         </div>
                         <div>
                           <button
-  className="text-blue-600 hover:text-blue-800 font-medium"
-  onClick={() => {
-    setSelectedLoan(loan);
-    setShowLoanModal(true);
-  }}
->
+                            className="text-blue-600 hover:text-blue-800 font-medium"
+                            onClick={() => {
+                              setSelectedLoan(loan);
+                              setShowLoanModal(true);
+                            }}
+                          >
                             View Details
                           </button>
                         </div>
@@ -384,7 +380,7 @@ const Dashboard = () => {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {loanData.paymentHistory.map((payment) => (
+                      {loanData.paymentHistory.map((payment: any) => (
                         <tr key={payment.id}>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             {payment.date}
@@ -541,7 +537,7 @@ const Dashboard = () => {
                   autoTable(doc, {
                     startY: 65,
                     head: [['Loan ID', 'Amount', 'Purpose', 'Status', 'Date']],
-                    body: loanData.loanHistory.map(l => [
+                    body: loanData.loanHistory.map((l: any) => [
                       l.id,
                       `$${l.amount.toLocaleString()}`,
                       l.purpose,
@@ -558,7 +554,7 @@ const Dashboard = () => {
                   autoTable(doc, {
                     startY: doc.lastAutoTable.finalY + 10,
                     head: [['Payment ID', 'Amount', 'Date', 'Status', 'Tx Hash']],
-                    body: loanData.paymentHistory.map(p => [
+                    body: loanData.paymentHistory.map((p: any) => [
                       p.id,
                       `$${p.amount.toLocaleString()}`,
                       p.date,
