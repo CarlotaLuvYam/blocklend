@@ -86,6 +86,16 @@ const findOverdueLoans = async () => {
   }
 };
 
+const getAllLoans = async () => {
+  const conn = await getPool().getConnection();
+  try {
+    const [rows] = await conn.query('SELECT * FROM loans');
+    return rows;
+  } finally {
+    conn.release();
+  }
+};
+
 module.exports = {
   createLoan,
   findLoanById,

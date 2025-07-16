@@ -33,8 +33,26 @@ router.get('/loans', async (req, res) => {
   }
 });
 
+// Middleware to check admin
+function requireAdmin(req, res, next) {
+  if (!req.user || req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Forbidden: Admins only' });
+  }
+  next();
+}
+
+// GET /admin/loans - Get all loan applications (admin only)
+router.get('/loans', requireAdmin, async (req, res) => {
+  try {
+    const loans = await require('../models/Loan').getAllLoans();
+    res.json(loans);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 // PATCH /admin/loan/:id/approve - Approve a loan
-router.patch('/loan/:id/approve', async (req, res) => {
+router.patch('/loan/:id/approve', requireAdmin, async (req, res) => {
   if (!req.user || req.user.role !== 'admin') {
     return res.status(403).json({ message: 'Forbidden: Admins only' });
   }
@@ -54,7 +72,7 @@ router.patch('/loan/:id/approve', async (req, res) => {
 });
 
 // PATCH /admin/loan/:id/decline - Decline a loan
-router.patch('/loan/:id/decline', async (req, res) => {
+router.patch('/loan/:id/decline', requireAdmin, async (req, res) => {
   const loanId = req.params.id;
   const { rejectionReason } = req.body;
   try {
