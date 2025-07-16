@@ -37,27 +37,57 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [token, setToken] = useState<string | null>(null);
 
+  // Only run localStorage logic on client
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedUser = localStorage.getItem('user');
+      const storedToken = localStorage.getItem('token');
+      if (storedUser && storedToken) {
+        setUser(JSON.parse(storedUser));
+        setToken(storedToken);
+        setIsAuthenticated(true);
+      } else {
+        setUser(null);
+        setToken(null);
+        setIsAuthenticated(false);
+      }
+    }
+  }, []);
+
   const login = (user: any, token: string) => {
     setUser(user);
     setIsAuthenticated(true);
     setToken(token);
-    localStorage.setItem('user', JSON.stringify(user));
-    localStorage.setItem('token', token);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('token', token);
+    }
   };
 
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
-    localStorage.removeItem('user');
+    setToken(null);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+    }
   };
 
   const updateUser = (userData: Partial<User>) => {
     if (user) {
       const updatedUser = { ...user, ...userData };
       setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      }
     }
   };
+
+  // Debug log
+  useEffect(() => {
+    console.log('[AuthContext] user:', user, 'token:', token, 'isAuthenticated:', isAuthenticated);
+  }, [user, token, isAuthenticated]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
