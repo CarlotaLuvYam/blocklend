@@ -2,10 +2,9 @@ const express = require('express');
 const router = express.Router();
 const Loan = require('../models/Loan');
 
-// GET /user/loans - Get all loans for the authenticated user (mock userId for now)
+// GET /user/loans - Get all loans for the authenticated user
 router.get('/user/loans', async (req, res) => {
-  // In production, get userId from auth/session
-  const userId = req.query.userId || 1; // Replace with real user id
+  const userId = req.user.id; // Use authenticated user ID
   try {
     const loans = await Loan.findLoansByBorrower(userId);
     res.json(loans);

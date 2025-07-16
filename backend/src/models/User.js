@@ -57,6 +57,6 @@ module.exports = {
   createUser,
   findByEmail,
   findByWalletAddress,
-  comparePassword
+  comparePassword,
+  getPool
 };
-module.exports = mongoose.model('User', userSchema); 

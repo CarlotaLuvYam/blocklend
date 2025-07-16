@@ -35,6 +35,9 @@ router.get('/loans', async (req, res) => {
 
 // PATCH /admin/loan/:id/approve - Approve a loan
 router.patch('/loan/:id/approve', async (req, res) => {
+  if (!req.user || req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Forbidden: Admins only' });
+  }
   const loanId = req.params.id;
   try {
     const conn = require('../server').pool.getConnection ? await require('../server').pool.getConnection() : null;
