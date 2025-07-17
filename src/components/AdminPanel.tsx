@@ -38,7 +38,7 @@ const getStatusColor = (status: string): string => {
 
 import { useAuth } from '../context/AuthContext';
 const AdminPanel = () => {
-  const { /* logout */ } = useAuth(); // Removed unused logout to resolve warning
+  const { logout } = useAuth();
   const navigate = useNavigate();
   // Only keep relevant state for backend-connected loan applications
   const [loanApplications, setLoanApplications] = useState<LoanApplication[]>([]);
@@ -55,7 +55,7 @@ const [actionLoading, setActionLoading] = useState<string | null>(null);
   };
 
   useEffect(() => {
-    fetch('https://your-backend-api.com/api/loan-applications')
+    fetch('http://localhost:5000/api/loan-applications')
       .then(res => res.json())
       .then(data => setLoanApplications(data))
       .catch(err => console.error('Failed to fetch loan applications', err));
@@ -64,7 +64,7 @@ const [actionLoading, setActionLoading] = useState<string | null>(null);
   const handleApprove = async (id: string) => {
     setActionLoading(id);
     try {
-      const res = await fetch(`https://your-backend-api.com/api/loan-applications/${id}/approve`, {
+      const res = await fetch(`http://localhost:5000/api/loan-applications/${id}/approve`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -84,7 +84,7 @@ const [actionLoading, setActionLoading] = useState<string | null>(null);
   const handleReject = async (id: string) => {
     setActionLoading(id);
     try {
-      const res = await fetch(`https://your-backend-api.com/api/loan-applications/${id}/reject`, {
+      const res = await fetch(`http://localhost:5000/api/loan-applications/${id}/reject`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -237,18 +237,19 @@ const [actionLoading, setActionLoading] = useState<string | null>(null);
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center px-4 pt-24 relative">
+      <button
+        onClick={() => { logout(); navigate('/'); }}
+        className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 z-10"
+      >
+        Logout
+      </button>
+      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-blue-900">Admin Panel</h1>
-              <p className="text-blue-600 mt-1">Manage loans and monitor platform performance</p>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Shield className="h-5 w-5 text-blue-600" />
-              <span className="text-sm font-medium text-blue-600">Administrator</span>
+        <div className="text-center mb-8">
+          <div className="flex justify-center mb-4">
+            <div className="p-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full">
+              <Shield className="h-8 w-8 text-white" />
             </div>
           </div>
         </div>
