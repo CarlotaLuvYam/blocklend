@@ -240,8 +240,13 @@ const Dashboard = () => {
                     <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
                     <div className="space-y-3">
                       <button
-  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-lg font-semibold hover:shadow-lg transition-all"
+  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+  disabled={!isConnected}
   onClick={async () => {
+    if (!isConnected) {
+      alert('Please connect your wallet to make a payment.');
+      return;
+    }
     try {
       if (!window.ethereum) {
         alert('MetaMask is not installed!');

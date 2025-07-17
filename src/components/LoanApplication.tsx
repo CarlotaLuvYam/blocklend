@@ -7,10 +7,30 @@ import { useAuth } from '../context/AuthContext';
 const LoanApplication = () => {
   const navigate = useNavigate();
   const { account, isConnected } = useWeb3();
-  const { isAuthenticated, login } = useAuth();
+  const { isAuthenticated, login, user } = useAuth(); // Add user from context
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [applicationResult, setApplicationResult] = useState<'approved' | 'rejected' | null>(null);
+  const [applicationResult, setApplicationResult] = useState<'approved' | 'rejected' | 'pending' | null>(null); // Add 'pending' to type
+
+  // ... rest of the state
+
+  // Hide form for admins
+  if (user && user.role === 'admin') {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+          <Shield className="h-16 w-16 text-blue-600 mx-auto mb-6" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Admins cannot apply for loans.</h2>
+          <button
+            onClick={() => navigate('/')}
+            className="mt-6 w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all"
+          >
+            Go Back to Home
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const [formData, setFormData] = useState({
     // Personal Information
@@ -101,13 +121,22 @@ const LoanApplication = () => {
         email: formData.email,
         name: formData.fullName,
         role: 'user'
-      });
+      }, '');
     }
     
     setIsProcessing(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsProcessing(true);
+    // ...simulate assessment or call backend
+    await simulateAIAssessment();
+    // After assessment, always set status to 'pending' (since backend enforces this)
+    setApplicationResult('pending');
+    setIsProcessing(false);
+  // End of handleSubmit
+
     e.preventDefault();
     await simulateAIAssessment();
   };
@@ -133,6 +162,26 @@ const LoanApplication = () => {
   }
 
   if (applicationResult) {
+    // Show Pending Approval if result is 'pending'
+    if (applicationResult === 'pending') {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center px-4">
+          <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 text-center">
+            <AlertCircle className="h-20 w-20 text-yellow-500 mx-auto mb-6" />
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Pending Approval</h2>
+            <p className="text-gray-600 mb-6">
+              Your loan application has been submitted and is pending approval by an administrator. You will be notified once a decision is made.
+            </p>
+            <button
+              onClick={() => navigate('/')}
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all"
+            >
+              Back to Home
+            </button>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center px-4">
         <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 text-center">

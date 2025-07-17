@@ -36,7 +36,9 @@ const getStatusColor = (status: string): string => {
   }
 };
 
+import { useAuth } from '../context/AuthContext';
 const AdminPanel = () => {
+  const { /* logout */ } = useAuth(); // Removed unused logout to resolve warning
   const navigate = useNavigate();
   // Only keep relevant state for backend-connected loan applications
   const [loanApplications, setLoanApplications] = useState<LoanApplication[]>([]);
@@ -128,6 +130,8 @@ const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   // Show login card if not authenticated as admin
   if (showLogin) {
+    // (No logout button needed on login screen)
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center px-4 pt-24">
         <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
@@ -320,5 +324,10 @@ const [actionLoading, setActionLoading] = useState<string | null>(null);
     </div>
   );
 }
+
+// ...inside the main admin panel render (after login)
+  // Add this logout button to the top right or header of the admin panel UI
+  // Example:
+  // <button onClick={() => { logout(); navigate('/'); }} className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">Logout</button>
 
 export default AdminPanel;
