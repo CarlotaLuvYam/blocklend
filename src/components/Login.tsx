@@ -16,14 +16,14 @@ const Login: React.FC = () => {
     e.preventDefault();
     setError('');
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch('/api/users/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
       const data = await res.json();
       if (res.ok) {
-        login(data.user, data.token);
+        login(data, ''); // No token from backend
         navigate('/dashboard');
       } else {
         setError(data.message || 'Login failed');
@@ -39,14 +39,14 @@ const Login: React.FC = () => {
       await connectWallet();
     }
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch('/api/users/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ walletAddress: account })
       });
       const data = await res.json();
       if (res.ok) {
-        login(data.user, data.token);
+        login(data, ''); // No token from backend
         navigate('/dashboard');
       } else {
         setError(data.message || 'Wallet login failed');
@@ -59,6 +59,9 @@ const Login: React.FC = () => {
   return (
     <div className="max-w-md mx-auto mt-20 bg-white shadow-lg rounded-lg p-8">
       <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+      {email && (
+        <div className="text-green-600 text-center mb-2">Welcome back!</div>
+      )}
       <div className="flex justify-center mb-4">
         <button
           className={`px-4 py-2 rounded-l ${!walletLogin ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}

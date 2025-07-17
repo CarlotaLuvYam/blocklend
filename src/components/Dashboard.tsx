@@ -18,8 +18,8 @@ import { useWeb3 } from '../context/Web3Context';
 
 const Dashboard = () => {
   const [showLoanModal, setShowLoanModal] = useState(false);
-  const [selectedLoan, setSelectedLoan] = useState<any>(null);
-  const [showStatementModal, setShowStatementModal] = useState(false);
+const [selectedLoan, setSelectedLoan] = useState<any>(null);
+const [showStatementModal, setShowStatementModal] = useState(false);
   const [statementPeriod, setStatementPeriod] = useState('monthly');
   const navigate = useNavigate();
   const { user, isAuthenticated, token } = useAuth();
@@ -81,10 +81,6 @@ const Dashboard = () => {
     const { amount, balance } = loanData.currentLoan;
     return ((amount - balance) / amount) * 100;
   };
-
-// Fix implicit any types in map functions throughout the file
-// Example usage: loanHistory.map((loan: any) => ...), paymentHistory.map((payment: any) => ...)
-
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: TrendingUp },
@@ -240,36 +236,36 @@ const Dashboard = () => {
                     <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
                     <div className="space-y-3">
                       <button
-  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-  disabled={!isConnected}
-  onClick={async () => {
-    if (!isConnected) {
-      alert('Please connect your wallet to make a payment.');
-      return;
-    }
-    try {
-      if (!window.ethereum) {
-        alert('MetaMask is not installed!');
-        return;
-      }
-      const provider = new BrowserProvider(window.ethereum);
-      await provider.send('eth_requestAccounts', []);
-      const signer = await provider.getSigner();
-      // Replace with your contract or recipient address
-      const address = await signer.getAddress();
-      const tx = await signer.sendTransaction({
-        to: address,
-        value: parseEther('0.1')
-      });
-      await tx.wait();
-      alert('Payment successful!');
-    } catch (err: any) {
-      alert(err.message || 'Payment failed or cancelled.');
-    }
-  }}
->
-  Make Payment
-</button>
+                        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={!isConnected}
+                        onClick={async () => {
+                          if (!isConnected) {
+                            alert('Please connect your wallet to make a payment.');
+                            return;
+                          }
+                          try {
+                            if (!window.ethereum) {
+                              alert('MetaMask is not installed!');
+                              return;
+                            }
+                            const provider = new BrowserProvider(window.ethereum);
+                            await provider.send('eth_requestAccounts', []);
+                            const signer = await provider.getSigner();
+                            // Replace with your contract or recipient address
+                            const address = await signer.getAddress();
+                            const tx = await signer.sendTransaction({
+                              to: address,
+                              value: parseEther('0.1')
+                            });
+                            await tx.wait();
+                            alert('Payment successful!');
+                          } catch (err: any) {
+                            alert(err.message || 'Payment failed or cancelled.');
+                          }
+                        }}
+                      >
+                        Make Payment
+                      </button>
                       <button 
                         onClick={() => navigate('/apply')}
                         className="w-full border border-gray-300 text-gray-700 p-4 rounded-lg font-semibold hover:bg-gray-50 transition-all"
@@ -277,11 +273,11 @@ const Dashboard = () => {
                         Apply for New Loan
                       </button>
                       <button
-  className="w-full border border-gray-300 text-gray-700 p-4 rounded-lg font-semibold hover:bg-gray-50 transition-all"
-  onClick={() => setShowStatementModal(true)}
->
-  Download Statements
-</button>
+                        className="w-full border border-gray-300 text-gray-700 p-4 rounded-lg font-semibold hover:bg-gray-50 transition-all"
+                        onClick={() => setShowStatementModal(true)}
+                      >
+                        Download Statements
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -337,23 +333,16 @@ const Dashboard = () => {
                           <div className="font-medium">${loan.amount.toLocaleString()}</div>
                         </div>
                         <div>
-                          <span className="text-gray-600">Date</span>
-                          <div className="font-medium">{loan.date}</div>
+                          <span className="text-gray-600">Interest Rate</span>
+                          <div className="font-medium">{loan.interestRate}%</div>
                         </div>
                         <div>
-                          <span className="text-gray-600">Status</span>
-                          <div className="font-medium capitalize">{loan.status}</div>
+                          <span className="text-gray-600">Payments Remaining</span>
+                          <div className="font-medium">{loan.paymentsRemaining}</div>
                         </div>
                         <div>
-                          <button
-                            className="text-blue-600 hover:text-blue-800 font-medium"
-                            onClick={() => {
-                              setSelectedLoan(loan);
-                              setShowLoanModal(true);
-                            }}
-                          >
-                            View Details
-                          </button>
+                          <span className="text-gray-600">Next Payment Date</span>
+                          <div className="font-medium">{loan.nextPaymentDate}</div>
                         </div>
                       </div>
                     </div>
@@ -370,39 +359,29 @@ const Dashboard = () => {
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Date
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Amount
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Status
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Transaction Hash
-                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transaction Hash</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {loanData.paymentHistory.map((payment: any) => (
-                        <tr key={payment.id}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {payment.date}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            ${payment.amount}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                              {payment.status}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                            {formatAddress(payment.txHash)}
-                          </td>
+                      {loanData && loanData.paymentHistory && loanData.paymentHistory.length > 0 ? (
+                        loanData.paymentHistory.map((payment: any) => (
+                          <tr key={payment.id}>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{payment.date}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${payment.amount}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{payment.status}</span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">{formatAddress(payment.txHash)}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={4} className="text-center text-gray-500 py-4">No payments found.</td>
                         </tr>
-                      ))}
+                      )}
                     </tbody>
                   </table>
                 </div>

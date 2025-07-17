@@ -18,14 +18,14 @@ const Register: React.FC = () => {
     e.preventDefault();
     setError('');
     try {
-      const res = await fetch('/api/auth/register', {
+      const res = await fetch('/api/users/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, firstName, lastName })
       });
       const data = await res.json();
       if (res.ok) {
-        login(data.user, data.token);
+        login(data, ''); // No token from backend
         navigate('/dashboard');
       } else {
         setError(data.message || 'Registration failed');
@@ -41,14 +41,14 @@ const Register: React.FC = () => {
       await connectWallet();
     }
     try {
-      const res = await fetch('/api/auth/register', {
+      const res = await fetch('/api/users/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ walletAddress: account, firstName, lastName })
       });
       const data = await res.json();
       if (res.ok) {
-        login(data.user, data.token);
+        login(data, ''); // No token from backend
         navigate('/dashboard');
       } else {
         setError(data.message || 'Wallet registration failed');
@@ -61,6 +61,9 @@ const Register: React.FC = () => {
   return (
     <div className="max-w-md mx-auto mt-20 bg-white shadow-lg rounded-lg p-8">
       <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
+      {firstName && (
+        <div className="text-green-600 text-center mb-2">Welcome, {firstName}!</div>
+      )}
       <div className="flex justify-center mb-4">
         <button
           className={`px-4 py-2 rounded-l ${!walletRegister ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}

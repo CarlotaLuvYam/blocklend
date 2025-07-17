@@ -237,14 +237,14 @@ const [actionLoading, setActionLoading] = useState<string | null>(null);
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center px-4 pt-24 relative">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 px-4 pt-24 relative">
       <button
         onClick={() => { logout(); navigate('/'); }}
         className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 z-10"
       >
         Logout
       </button>
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
+      <div className="max-w-6xl w-full mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
@@ -255,28 +255,28 @@ const [actionLoading, setActionLoading] = useState<string | null>(null);
         </div>
 
         {/* Dashboard Statistics */}
-        <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-lg shadow p-4 text-center">
-            <div className="text-2xl font-bold text-blue-900">{dashboardStats.totalLoans}</div>
-            <div className="text-sm text-blue-600">Total Loans</div>
+        <div className="mb-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="bg-white rounded-lg shadow p-6 text-center">
+            <div className="text-3xl font-bold text-blue-900">{dashboardStats.totalLoans}</div>
+            <div className="text-base text-blue-600">Total Loans</div>
           </div>
-          <div className="bg-white rounded-lg shadow p-4 text-center">
-            <div className="text-2xl font-bold text-blue-900">${dashboardStats.totalValue.toLocaleString()}</div>
-            <div className="text-sm text-blue-600">Total Value</div>
+          <div className="bg-white rounded-lg shadow p-6 text-center">
+            <div className="text-3xl font-bold text-blue-900">${dashboardStats.totalValue.toLocaleString()}</div>
+            <div className="text-base text-blue-600">Total Value</div>
           </div>
-          <div className="bg-white rounded-lg shadow p-4 text-center">
-            <div className="text-2xl font-bold text-blue-900">{dashboardStats.defaultRate}%</div>
-            <div className="text-sm text-blue-600">Default Rate</div>
+          <div className="bg-white rounded-lg shadow p-6 text-center">
+            <div className="text-3xl font-bold text-blue-900">{dashboardStats.defaultRate}%</div>
+            <div className="text-base text-blue-600">Default Rate</div>
           </div>
-          <div className="bg-white rounded-lg shadow p-4 text-center">
-            <div className="text-2xl font-bold text-blue-900">{dashboardStats.avgProcessingTime} days</div>
-            <div className="text-sm text-blue-600">Avg. Processing Time</div>
+          <div className="bg-white rounded-lg shadow p-6 text-center">
+            <div className="text-3xl font-bold text-blue-900">{dashboardStats.avgProcessingTime} days</div>
+            <div className="text-base text-blue-600">Avg. Processing Time</div>
           </div>
         </div>
 
         {/* Loan Applications Table */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-xl font-bold text-blue-900 mb-4">Loan Applications</h2>
+        <div className="bg-white rounded-xl shadow-lg p-8">
+          <h2 className="text-2xl font-bold text-blue-900 mb-6">Loan Applications</h2>
           <table className="min-w-full divide-y divide-gray-200">
             <thead>
               <tr>
