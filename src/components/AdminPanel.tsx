@@ -238,6 +238,15 @@ const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 px-4 pt-24 relative">
+      {/* Logout Button - visible and spaced below header */}
+      <div className="flex justify-end mt-8 mb-4">
+        <button
+          onClick={() => { logout(); navigate('/'); }}
+          className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 shadow"
+        >
+          Logout
+        </button>
+      </div>
       <button
         onClick={() => { logout(); navigate('/'); }}
         className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 z-10"

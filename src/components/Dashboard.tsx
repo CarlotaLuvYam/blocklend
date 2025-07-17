@@ -44,16 +44,22 @@ const [showStatementModal, setShowStatementModal] = useState(false);
       }
     })
       .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch loans');
+        if (!res.ok) {
+          return res.json().then(errData => {
+            throw new Error(errData?.message || 'Failed to fetch loans');
+          });
+        }
         return res.json();
       })
       .then(data => {
+        console.log('Loan data:', data);
         setLoanData(data);
         setLoading(false);
       })
-      .catch(() => {
-        setError('Could not load loans');
+      .catch((err) => {
+        setError(err.message || 'Could not load loans');
         setLoading(false);
+        console.error('Loan fetch error:', err);
       });
   }, [isAuthenticated, token, navigate]);
 
