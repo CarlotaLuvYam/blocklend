@@ -97,6 +97,25 @@ const [showStatementModal, setShowStatementModal] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-20">
+      {/* Notification Banner for loan decision */}
+      {loanData?.loanHistory?.some((loan: any) => ['approved', 'declined', 'rejected'].includes(loan.status)) && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4">
+          {loanData.loanHistory.map((loan: any) => (
+            (loan.status === 'approved' || loan.status === 'active') && (
+              <div key={loan.id} className="bg-green-100 border border-green-300 text-green-800 px-4 py-3 rounded mb-2">
+                Your loan application #{loan.id} has been <span className="font-semibold">approved</span>!
+              </div>
+            )
+          ))}
+          {loanData.loanHistory.map((loan: any) => (
+            (loan.status === 'declined' || loan.status === 'rejected') && (
+              <div key={loan.id} className="bg-red-100 border border-red-300 text-red-800 px-4 py-3 rounded mb-2">
+                Your loan application #{loan.id} has been <span className="font-semibold">declined</span>.
+              </div>
+            )
+          ))}
+        </div>
+      )}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -325,12 +344,17 @@ const [showStatementModal, setShowStatementModal] = useState(false);
                           <h4 className="font-semibold text-gray-900">Loan #{loan.id}</h4>
                           <p className="text-sm text-gray-600">{loan.purpose}</p>
                         </div>
+                        {/* Status badge with color and label */}
                         <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          loan.status === 'active' 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-gray-100 text-gray-800'
+                          loan.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                          loan.status === 'approved' || loan.status === 'active' ? 'bg-green-100 text-green-800' :
+                          loan.status === 'declined' || loan.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                          'bg-gray-100 text-gray-800'
                         }`}>
-                          {loan.status}
+                          {loan.status === 'pending' && 'Pending Approval'}
+                          {(loan.status === 'approved' || loan.status === 'active') && 'Approved'}
+                          {(loan.status === 'declined' || loan.status === 'rejected') && 'Declined'}
+                          {['pending','approved','active','declined','rejected'].indexOf(loan.status) === -1 && loan.status}
                         </div>
                       </div>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">

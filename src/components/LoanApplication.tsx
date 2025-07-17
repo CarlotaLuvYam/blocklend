@@ -6,8 +6,8 @@ import { useAuth } from '../context/AuthContext';
 
 const LoanApplication = () => {
   const navigate = useNavigate();
-  const { account, isConnected } = useWeb3();
-  const { isAuthenticated, login, user } = useAuth(); // Add user from context
+  const { isConnected } = useWeb3();
+  const { user } = useAuth(); // Add user from context
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
   const [applicationResult, setApplicationResult] = useState<'approved' | 'rejected' | 'pending' | null>(null); // Add 'pending' to type
@@ -111,19 +111,8 @@ const LoanApplication = () => {
     else if (creditScore > 500) score += 5;
     
     // Determine approval (score > 60 for approval)
-    const approved = score > 60;
-    setApplicationResult(approved ? 'approved' : 'rejected');
-    
-    // Register user if not authenticated
-    if (!isAuthenticated && approved) {
-      login({
-        address: account || '',
-        email: formData.email,
-        name: formData.fullName,
-        role: 'user'
-      }, '');
-    }
-    
+    // No more auto-approval or rejection on frontend; always pending
+    setApplicationResult('pending');
     setIsProcessing(false);
   };
 
