@@ -38,7 +38,7 @@ const getStatusColor = (status: string): string => {
 
 import { useAuth } from '../context/AuthContext';
 const AdminPanel = () => {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   // Only keep relevant state for backend-connected loan applications
   const [loanApplications, setLoanApplications] = useState<LoanApplication[]>([]);
@@ -55,7 +55,7 @@ const [actionLoading, setActionLoading] = useState<string | null>(null);
   };
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/loan-applications')
+    fetch('/api/loan-applications')
       .then(res => res.json())
       .then(data => setLoanApplications(data))
       .catch(err => console.error('Failed to fetch loan applications', err));
@@ -236,8 +236,25 @@ const [actionLoading, setActionLoading] = useState<string | null>(null);
     );
   }
 
+  // Only allow access for admin users
+  if (!User || User.role !== 'admin') {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+          <Shield className="h-16 w-16 text-blue-600 mx-auto mb-6" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Not Authorized</h2>
+          <p className="text-gray-600 mb-6">You do not have permission to access the admin panel.</p>
+          <button onClick={() => navigate('/')} className="mt-6 w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all">Back to Home</button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 px-4 pt-24 relative">
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-bold text-blue-900 mb-2">Admin Panel</h1>
+      </div>
       {/* Logout Button - visible and spaced below header */}
       <div className="flex justify-end mt-8 mb-4">
         <button

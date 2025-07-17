@@ -69,8 +69,18 @@ const [showStatementModal, setShowStatementModal] = useState(false);
     }
   }, [isAuthenticated, isConnected, navigate]);
 
-  if (!isAuthenticated || !isConnected) {
-    return null;
+  // Only allow access for non-admin users
+  if (!isAuthenticated || !isConnected || (user && user.role === 'admin')) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+          <Shield className="h-16 w-16 text-blue-600 mx-auto mb-6" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Not Authorized</h2>
+          <p className="text-gray-600 mb-6">You do not have permission to access the user dashboard.</p>
+          <button onClick={() => navigate('/')} className="mt-6 w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all">Back to Home</button>
+        </div>
+      </div>
+    );
   }
   if (loading) {
     return <div className="text-center mt-10">Loading loans...</div>;
@@ -116,6 +126,21 @@ const [showStatementModal, setShowStatementModal] = useState(false);
           ))}
         </div>
       )}
+      {/* Show navigation buttons for user actions */}
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={() => navigate('/loan-application')}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 shadow mr-2"
+        >
+          Apply for Loan
+        </button>
+        <button
+          onClick={() => navigate('/')}
+          className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 shadow"
+        >
+          Back to Home
+        </button>
+      </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">

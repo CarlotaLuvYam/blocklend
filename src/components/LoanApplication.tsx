@@ -119,10 +119,22 @@ const LoanApplication = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
-    // ...simulate assessment or call backend
-    await simulateAIAssessment();
-    // After assessment, always set status to 'pending' (since backend enforces this)
-    setApplicationResult('pending');
+    try {
+      const response = await fetch('/api/loan-applications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          status: 'pending',
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to submit loan application');
+      setApplicationResult('pending');
+    } catch (err) {
+      alert('Submission failed. Please try again.');
+    }
     setIsProcessing(false);
   // End of handleSubmit
 
