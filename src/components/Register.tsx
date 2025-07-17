@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { registerUser } from '../services/auth';
 import { useAuth } from '../context/AuthContext';
 import { useWeb3 } from '../context/Web3Context';
 
@@ -36,27 +37,18 @@ const Register: React.FC = () => {
   };
 
   const handleWalletRegister = async () => {
-    setError('');
-    if (!account) {
-      await connectWallet();
-    }
-    try {
-      const res = await fetch('/api/users/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ walletAddress: account, firstName, lastName })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        login(data, ''); // No token from backend
-        navigate('/dashboard');
-      } else {
-        setError(data.message || 'Wallet registration failed');
-      }
-    } catch (err) {
-      setError('Server error');
-    }
-  };
+  setError('');
+  if (!account) {
+    await connectWallet();
+  }
+  try {
+    const data = await registerUser({ walletAddress: account ?? undefined, firstName, lastName });
+    login(data, data.token);
+    navigate('/dashboard');
+  } catch (err: any) {
+    setError(err.message || 'Wallet registration failed');
+  }
+};
 
   return (
     <div className="max-w-md mx-auto mt-20 bg-white shadow-lg rounded-lg p-8">

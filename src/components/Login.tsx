@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { loginUser } from '../services/auth';
 import { useAuth } from '../context/AuthContext';
 import { useWeb3 } from '../context/Web3Context';
 
@@ -34,27 +35,18 @@ const Login: React.FC = () => {
   };
 
   const handleWalletLogin = async () => {
-    setError('');
-    if (!account) {
-      await connectWallet();
-    }
-    try {
-      const res = await fetch('/api/users/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ walletAddress: account })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        login(data, ''); // No token from backend
-        navigate('/dashboard');
-      } else {
-        setError(data.message || 'Wallet login failed');
-      }
-    } catch (err) {
-      setError('Server error');
-    }
-  };
+  setError('');
+  if (!account) {
+    await connectWallet();
+  }
+  try {
+    const data = await loginUser({ walletAddress: account ?? undefined });
+    login(data, data.token);
+    navigate('/dashboard');
+  } catch (err: any) {
+    setError(err.message || 'Wallet login failed');
+  }
+};
 
   return (
     <div className="max-w-md mx-auto mt-20 bg-white shadow-lg rounded-lg p-8">

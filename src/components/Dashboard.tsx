@@ -18,7 +18,7 @@ import { useWeb3 } from '../context/Web3Context';
 
 const Dashboard = () => {
   const [showLoanModal, setShowLoanModal] = useState(false);
-const [selectedLoan, setSelectedLoan] = useState<any>(null);
+const [selectedLoan] = useState<any>(null);
 const [showStatementModal, setShowStatementModal] = useState(false);
   const [statementPeriod, setStatementPeriod] = useState('monthly');
   const navigate = useNavigate();
