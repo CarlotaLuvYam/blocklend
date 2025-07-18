@@ -50,6 +50,9 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { email, password, walletAddress } = req.body;
+          // Email/password login
+          console.log("Email: ", email);
+          console.log("Password: ", password);
     if (walletAddress) {
       // Wallet-based login
       const user = users.find(u => u.walletAddress === walletAddress);
@@ -58,14 +61,16 @@ router.post('/login', async (req, res) => {
       }
       return res.json({ id: user.id, firstName: user.firstName, lastName: user.lastName, walletAddress: user.walletAddress });
     } else {
-      // Email/password login
-      const user = users.find(u => u.email === email);
+
+      const user = await User.findByEmail(email.toLowerCase());
       if (!user) {
-        return res.status(401).json({ message: 'Invalid credentials.' });
+        console.log("User not found.");
+        return res.status(401).json({ message: '*Invalid credentials.' });
       }
       const valid = await bcrypt.compare(password, user.password);
       if (!valid) {
-        return res.status(401).json({ message: 'Invalid credentials.' });
+        console.log("Invalid password.");
+        return res.status(401).json({ message: '#Invalid credentials.' });
       }
       return res.json({ id: user.id, firstName: user.firstName, lastName: user.lastName, email: user.email });
     }

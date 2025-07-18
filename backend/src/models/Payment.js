@@ -1,6 +1,4 @@
-const { pool } = require('../server');
-
-const getPool = () => pool();
+const { getPool } = require('../db');
 
 const createPayment = async (paymentData) => {
   const conn = await getPool().getConnection();

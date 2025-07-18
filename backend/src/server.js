@@ -5,16 +5,11 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
-// Import routes
-const authRoutes = require('./routes/auth');
-const userRoutes = require('./routes/users');
-const loanRoutes = require('./routes/loans');
-const adminRoutes = require('./routes/admin');
-const analyticsRoutes = require('./routes/analytics');
-const { server } = require('typescript');
-
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Global pool variable
+let pool;
 
 // Security middleware
 app.use(helmet());
@@ -51,54 +46,72 @@ app.get('/health', (req, res) => {
   });
 });
 
-// API routes
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/loans', loanRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/analytics', analyticsRoutes);
-
-// 404 handler
-app.use('*', (req, res) => {
-  res.status(404).json({ message: 'Route not found' });
-});
-
-// Global error handler
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(err.status || 500).json({
-    message: err.message || 'Something went wrong!',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
-  });
-});
-
 // MySQL2 Database connection
-let pool;
 const connectDB = async () => {
   try {
     pool = mysql.createPool({
       host: process.env.MYSQL_HOST || 'localhost',
       user: process.env.MYSQL_USER || 'root',
-      password: process.env.MYSQL_PASSWORD || '',
+      password: process.env.MYSQL_PASSWORD || '030621Ljh',
       database: process.env.MYSQL_DATABASE || 'blocklend',
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0
     });
-    // Test connection
-    await pool.getConnection();
+  
+    // Test the connection
+    const connection = await pool.getConnection();
     console.log('MySQL2 connected successfully');
+    connection.release();
   } catch (error) {
     console.error('MySQL2 connection error:', error);
     process.exit(1);
   }
 };
 
-module.exports.pool = () => pool;
+// Function to get the pool instance
+const getPool = () => {
+  if (!pool) {
+    throw new Error('Database pool not initialized');
+  }
+  return pool;
+};
 
 // Start server
 const startServer = async () => {
   await connectDB();
+  console.log("------");
+  console.log("Pool initialized:", !!pool);
+  console.log("------");
+  
+  // Import routes AFTER database connection is established
+  const authRoutes = require('./routes/auth');
+  const userRoutes = require('./routes/users');
+  const loanRoutes = require('./routes/loans');
+  const adminRoutes = require('./routes/admin');
+  const analyticsRoutes = require('./routes/analytics');
+  
+  // API routes
+  app.use('/api/auth', authRoutes);
+  app.use('/api/users', userRoutes);
+  app.use('/api', loanRoutes);
+  app.use('/api/admin', adminRoutes);
+  app.use('/api/analytics', analyticsRoutes);
+  
+  // 404 handler
+  app.use('*', (req, res) => {
+    res.status(404).json({ message: 'Route not found' });
+  });
+  
+  // Global error handler
+  app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(err.status || 500).json({
+      message: err.message || 'Something went wrong!',
+      ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    });
+  });
+  
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV}`);
@@ -107,5 +120,5 @@ const startServer = async () => {
 
 startServer();
 
-// Export pool for use in models
-module.exports = { app, pool: () => pool };
+// Export pool getter function for use in models
+module.exports = { app, getPool };

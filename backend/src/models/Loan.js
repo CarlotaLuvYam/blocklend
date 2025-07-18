@@ -1,6 +1,5 @@
-const { pool } = require('../server');
+const { getPool } = require('../db');
 
-const getPool = () => pool();
 
 // Loan CRUD and query functions
 const createLoan = async (loanData) => {
@@ -12,7 +11,7 @@ const createLoan = async (loanData) => {
       [
         loanData.borrower,
         loanData.loanType,
-        loanData.amount,
+        loanData.loanAmount,
         loanData.currency || 'USD',
         loanData.interestRate,
         loanData.term,
@@ -102,6 +101,7 @@ module.exports = {
   findLoansByBorrower,
   findActiveLoans,
   findOverdueLoans,
-  getPool
+  getPool,
+  getAllLoans
 };
 

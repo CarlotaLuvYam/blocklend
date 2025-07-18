@@ -1,5 +1,5 @@
 // Run this script once to create the users table in MySQL
-const pool = require('./db');
+const { getPool } = require('./db');
 
 async function migrate() {
   const createTableSQL = `
@@ -13,7 +13,7 @@ async function migrate() {
     );
   `;
   try {
-    await pool.query(createTableSQL);
+    await getPool.query(createTableSQL);
     console.log('Users table created or already exists.');
     process.exit(0);
   } catch (err) {

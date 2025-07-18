@@ -1,13 +1,12 @@
 const bcrypt = require('bcryptjs');
-const { pool } = require('../server');
-
-// Utility: get pool
-const getPool = () => pool();
+const { getPool } = require('../db');
+ 
 
 // User CRUD and auth functions
 const createUser = async (userData) => {
   const conn = await getPool().getConnection();
   try {
+    console.log("User Data: ", hash);
     const hash = await bcrypt.hash(userData.password, 12);
     const [result] = await conn.query(
       `INSERT INTO users (email, password, firstName, lastName, walletAddress, phone, dateOfBirth, role, isActive, emailVerified)
